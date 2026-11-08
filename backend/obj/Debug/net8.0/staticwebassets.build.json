@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "yPJsiaWB3IG8JHpVHFfRI82In6XsBt9j1/h9fox0Jj8=",
+  "Source": "BlockchainSIEM",
+  "BasePath": "_content/BlockchainSIEM",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
