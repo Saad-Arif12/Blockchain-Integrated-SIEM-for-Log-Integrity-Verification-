@@ -17,13 +17,19 @@ namespace BlockchainSIEM.Controllers
             _blockchainService = blockchainService;
         }
 
+        [HttpGet]
+        public IActionResult GetLogs()
+        {
+            return Ok(_logProcessor.GetAllLogs());
+        }
+
         [HttpPost("ingest")]
         public async Task<IActionResult> Ingest([FromBody] IngestLogRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var processedLog = _logProcessor.ProcessRawLog(request);
+            var processedLog = await _logProcessor.ProcessRawLogAsync(request);
 
             string? txHash = await _blockchainService.SubmitHashAsync(
                 processedLog.Id.ToString(),
@@ -37,6 +43,7 @@ namespace BlockchainSIEM.Controllers
                 status = "ingested",
                 logId = processedLog.Id,
                 eventType = processedLog.EventType,
+                severity = processedLog.Severity,
                 sha256Hash = processedLog.LogHash,
                 timestamp = processedLog.Timestamp,
                 blockchainStatus = txHash != null ? "on-chain" : "offline-buffered",

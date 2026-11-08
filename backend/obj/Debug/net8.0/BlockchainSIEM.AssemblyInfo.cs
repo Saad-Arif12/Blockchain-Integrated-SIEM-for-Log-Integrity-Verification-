@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BlockchainSIEM")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd060b0840adbac49c201d15425f2a86ce342499")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9a5e7a8f6c333cecd5e5e28ec957bb1ca4f2217f")]
 [assembly: System.Reflection.AssemblyProductAttribute("BlockchainSIEM")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BlockchainSIEM")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

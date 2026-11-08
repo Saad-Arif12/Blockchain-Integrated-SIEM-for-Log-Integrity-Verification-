@@ -5,48 +5,54 @@ contract LogIntegrity {
     struct LogRecord {
         string logId;
         bytes32 logHash;
-        uint256 timestamp;
         string deviceId;
         string severity;
-        bool isVerified;
+        uint256 timestamp;
+        address recorder;
     }
 
-    mapping(string => LogRecord) private logRecords;
-    address public owner;
-
-    event LogStored(string indexed logId, bytes32 indexed logHash, uint256 timestamp, string deviceId);
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Caller is not contract owner");
-        _;
-    }
-
-    constructor() {
-        owner = msg.sender;
-    }
+    mapping(string => LogRecord) private logs;
+    mapping(string => bool) private logExists;
+    
+    event LogStored(string indexed logId, bytes32 indexed logHash, string deviceId, string severity, uint256 timestamp);
 
     function StoreHash(
         string memory _logId,
         bytes32 _logHash,
         string memory _deviceId,
         string memory _severity
-    ) external onlyOwner {
-        require(logRecords[_logId].timestamp == 0, "Log ID already exists");
+    ) public {
+        require(!logExists[_logId], "Log ID already registered on-chain");
 
-        logRecords[_logId] = LogRecord({
+        logs[_logId] = LogRecord({
             logId: _logId,
             logHash: _logHash,
-            timestamp: block.timestamp,
             deviceId: _deviceId,
             severity: _severity,
-            isVerified: true
+            timestamp: block.timestamp,
+            recorder: msg.sender
         });
 
-        emit LogStored(_logId, _logHash, block.timestamp, _deviceId);
+        logExists[_logId] = true;
+        emit LogStored(_logId, _logHash, _deviceId, _severity, block.timestamp);
     }
 
-    function VerifyHash(string memory _logId, bytes32 _computedHash) external view returns (bool) {
-        require(logRecords[_logId].timestamp != 0, "Log ID not found");
-        return logRecords[_logId].logHash == _computedHash;
+    function VerifyHash(string memory _logId, bytes32 _computedHash) public view returns (bool) {
+        if (!logExists[_logId]) {
+            return false;
+        }
+        return logs[_logId].logHash == _computedHash;
+    }
+
+    function GetLogRecord(string memory _logId) public view returns (
+        bytes32 logHash,
+        string memory deviceId,
+        string memory severity,
+        uint256 timestamp,
+        address recorder
+    ) {
+        require(logExists[_logId], "Record does not exist");
+        LogRecord memory rec = logs[_logId];
+        return (rec.logHash, rec.deviceId, rec.severity, rec.timestamp, rec.recorder);
     }
 }

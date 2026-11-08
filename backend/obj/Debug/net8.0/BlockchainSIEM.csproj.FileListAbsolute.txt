@@ -49,3 +49,4 @@ D:\FYP\backend\obj\Debug\net8.0\refint\BlockchainSIEM.dll
 D:\FYP\backend\obj\Debug\net8.0\BlockchainSIEM.pdb
 D:\FYP\backend\obj\Debug\net8.0\BlockchainSIEM.genruntimeconfig.cache
 D:\FYP\backend\obj\Debug\net8.0\ref\BlockchainSIEM.dll
+D:\FYP\backend\bin\Debug\net8.0\appsettings.json
