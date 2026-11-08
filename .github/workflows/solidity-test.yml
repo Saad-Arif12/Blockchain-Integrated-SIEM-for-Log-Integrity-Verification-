@@ -1,0 +1,40 @@
+﻿name: Solidity Smart Contracts CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'blockchain/**'
+      - '.github/workflows/solidity-test.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'blockchain/**'
+      - '.github/workflows/solidity-test.yml'
+
+jobs:
+  hardhat-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: 'blockchain/package-lock.json'
+
+    - name: Install Blockchain Dependencies
+      working-directory: ./blockchain
+      run: npm ci
+
+    - name: Compile Smart Contracts
+      working-directory: ./blockchain
+      run: npx hardhat compile
+
+    - name: Execute Contract Unit Tests
+      working-directory: ./blockchain
+      run: npx hardhat test

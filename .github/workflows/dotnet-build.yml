@@ -1,0 +1,35 @@
+﻿name: ASP.NET Core Build & Test Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/dotnet-build.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/dotnet-build.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 8 SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore backend/BlockchainSIEM.csproj
+
+    - name: Build ASP.NET Core Backend
+      run: dotnet build backend/BlockchainSIEM.csproj --configuration Release --no-restore
+
+    - name: Run Unit & Integration Tests
+      run: dotnet test backend/BlockchainSIEM.csproj --configuration Release --no-build --verbosity normal
