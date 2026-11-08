@@ -1,0 +1,29 @@
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Hardhat & Ethereum artifacts
+blockchain/artifacts/
+blockchain/cache/
+blockchain/typechain-types/
+
+# .NET build output
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+env/
+
+# Environment files & IDEs
+.env
+.vscode/
+.idea/
