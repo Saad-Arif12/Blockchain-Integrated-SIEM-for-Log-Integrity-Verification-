@@ -24,12 +24,10 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-        cache: 'npm'
-        cache-dependency-path: 'blockchain/package-lock.json'
 
     - name: Install Blockchain Dependencies
       working-directory: ./blockchain
-      run: npm ci
+      run: npm install
 
     - name: Compile Smart Contracts
       working-directory: ./blockchain
