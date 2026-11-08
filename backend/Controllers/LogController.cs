@@ -9,19 +9,28 @@ namespace BlockchainSIEM.Controllers
     public class LogController : ControllerBase
     {
         private readonly ILogProcessorService _logProcessor;
+        private readonly IBlockchainService _blockchainService;
 
-        public LogController(ILogProcessorService logProcessor)
+        public LogController(ILogProcessorService logProcessor, IBlockchainService blockchainService)
         {
             _logProcessor = logProcessor;
+            _blockchainService = blockchainService;
         }
 
         [HttpPost("ingest")]
-        public IActionResult Ingest([FromBody] IngestLogRequest request)
+        public async Task<IActionResult> Ingest([FromBody] IngestLogRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var processedLog = _logProcessor.ProcessRawLog(request);
+
+            string? txHash = await _blockchainService.SubmitHashAsync(
+                processedLog.Id.ToString(),
+                processedLog.LogHash,
+                processedLog.SourceIp,
+                processedLog.Severity
+            );
 
             return Ok(new
             {
@@ -29,7 +38,22 @@ namespace BlockchainSIEM.Controllers
                 logId = processedLog.Id,
                 eventType = processedLog.EventType,
                 sha256Hash = processedLog.LogHash,
-                timestamp = processedLog.Timestamp
+                timestamp = processedLog.Timestamp,
+                blockchainStatus = txHash != null ? "on-chain" : "offline-buffered",
+                blockchainTxHash = txHash
+            });
+        }
+
+        [HttpGet("verify/{logId}/{sha256Hash}")]
+        public async Task<IActionResult> Verify(string logId, string sha256Hash)
+        {
+            bool isVerified = await _blockchainService.VerifyHashAsync(logId, sha256Hash);
+
+            return Ok(new
+            {
+                logId,
+                computedHash = sha256Hash,
+                isIntegrityValid = isVerified
             });
         }
     }
